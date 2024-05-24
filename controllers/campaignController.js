@@ -2,6 +2,7 @@ const initializeDatabase = require('../config/db');
 const { createCampaign, findCampaignById } = require('../models/campaign');
 const { nanoid } = require('nanoid');
 const QRCode = require('qrcode');
+const path = require('path');
 
 // Função para criar uma nova campanha
 exports.createCampaign = async (req, res) => {
@@ -58,7 +59,9 @@ exports.getCampaignByUniqueLink = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({ error: 'Campaign not found' });
     }
-    res.sendFile(__dirname + '/../public/html/survey.html');
+    const surveyPath = path.join(__dirname, '..', 'public', 'html', 'survey.html');
+    console.log("Serving survey.html from:", surveyPath);
+    res.sendFile(surveyPath);
   } catch (error) {
     console.error('Error getting campaign:', error);
     res.status(400).json({ error: error.message });

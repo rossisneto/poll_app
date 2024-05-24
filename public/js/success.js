@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (qrCode && uniqueLink) {
         document.getElementById('qrCode').src = qrCode;
-        document.getElementById('campaignLink').href = uniqueLink;
+        document.getElementById('campaignLink').href = "/campaign/" + uniqueLink;
     } else {
         document.getElementById('successMessage').innerHTML = '<p>Error: Missing campaign details.</p>';
     }
