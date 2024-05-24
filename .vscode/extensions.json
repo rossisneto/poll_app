@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "formulahendry.auto-rename-tag",
+      "ms-vscode.vscode-typescript-tslint-plugin",
+      "msjsdiag.debugger-for-chrome",
+      "streetsidesoftware.code-spell-checker"
+    ]
+  }
+
+  
