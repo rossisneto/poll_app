@@ -7,12 +7,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         const campaignsResponse = await fetch('/campaigns');
         if (campaignsResponse.ok) {
             const campaigns = await campaignsResponse.json();
-            campaigns.forEach(campaign => {
+            campaigns.reverse().forEach(campaign => {
                 const option = document.createElement('option');
                 option.value = campaign.id;
                 option.textContent = campaign.title;
                 campaignSelect.appendChild(option);
             });
+
+            // Selecionar a última campanha por padrão
+            if (campaigns.length > 0) {
+                campaignSelect.value = campaigns[0].id;
+                await loadCampaignResults(campaigns[0].id);
+            }
         } else {
             alert('Failed to load campaigns');
         }
@@ -21,12 +27,15 @@ document.addEventListener('DOMContentLoaded', async function () {
         alert('Failed to load campaigns');
     }
 
-    campaignSelect.addEventListener('change', async function () {
+    campaignSelect.addEventListener('change', function () {
         const campaignId = this.value;
-        if (!campaignId) return;
+        if (campaignId) {
+            loadCampaignResults(campaignId);
+        }
+    });
 
+    async function loadCampaignResults(campaignId) {
         try {
-            // Fetch the campaign details to get the options text
             const campaignDetailsResponse = await fetch(`/campaigns/${campaignId}`);
             const campaignDetails = await campaignDetailsResponse.json();
 
@@ -43,7 +52,23 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 const labels = responses.map(response => optionTextMap[response.selected_option]);
                 const data = responses.map(response => response.count);
+                const totalVotes = data.reduce((acc, curr) => acc + curr, 0);
+                const percentages = data.map(count => ((count / totalVotes) * 100).toFixed(2));
 
+                // Atualizar tabela de resultados
+                const resultsTableBody = document.getElementById('resultsTableBody');
+                resultsTableBody.innerHTML = '';
+                responses.forEach((response, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${labels[index]}</td>
+                        <td>${data[index]}</td>
+                        <td>${percentages[index]}</td>
+                    `;
+                    resultsTableBody.appendChild(row);
+                });
+
+                // Atualizar gráfico de resultados
                 if (resultsChart) {
                     resultsChart.destroy();
                 }
@@ -69,5 +94,5 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.error('Error:', error);
             alert('Failed to load responses');
         }
-    });
+    }
 });

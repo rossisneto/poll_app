@@ -8,6 +8,7 @@ h1, h2 {
 
 .container {
     max-width: 600px;
+    
 }
 
 .form-group, .form-check {
@@ -36,6 +37,11 @@ button {
 .invalid-feedback {
     display: block;
     margin-top: 0.5rem;
+}
+
+.chart-container{
+    display: flex;
+    align-items: left;
 }
 
 @media (max-width: 576px) {

@@ -12,8 +12,10 @@ async function initializeDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       email TEXT NOT NULL,
-      social_id TEXT NOT NULL,
-      provider TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      location TEXT NOT NULL,
+      social_id TEXT,
+      provider TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -41,7 +43,6 @@ async function initializeDatabase() {
       FOREIGN KEY (campaign_id) REFERENCES campaigns(id),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
-    
 
   `);
 
