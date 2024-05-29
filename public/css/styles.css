@@ -1,57 +1,58 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    background-color: #f8f9fa;
 }
 
-h1 {
-    text-align: center;
+h1, h2 {
+    color: #343a40;
 }
 
-form {
-    max-width: 400px;
-    margin: auto;
-    padding: 1em;
-    border: 1px solid #ccc;
-    border-radius: 1em;
+.container {
+    max-width: 600px;
 }
 
-label {
-    margin-top: 1em;
-    margin-bottom: 0.5em;
-    color: #333;
-}
-
-input {
-    display: block;
-    width: 100%;
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    border-radius: 0.25em;
-    margin-bottom: 1em;
+.form-group, .form-check {
+    margin-bottom: 1rem;
 }
 
 button {
-    padding: 0.7em;
-    color: #fff;
-    background-color: #007BFF;
-    border: none;
-    border-radius: 0.25em;
-    cursor: pointer;
+    width: 100%;
 }
 
-button:hover {
-    background-color: #0056b3;
+.btn-option {
+    font-size: 1.5rem;  /* Aumentado o tamanho do texto em 50% */
+    border-radius: 10px;  /* Cantos suavizados */
+    padding: 1rem;  /* Adiciona espaçamento interno */
+    aspect-ratio: 1;  /* Mantém a proporção entre altura e largura */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100px + 1vw); /* Ajusta altura */
 }
 
-.hidden {
-    display: none;
+.btn-submit {
+    height: calc(80px + 1vw); /* Dobrar a altura do botão submit */
 }
 
-#successMessage {
-    text-align: center;
-    margin-top: 20px;
+.invalid-feedback {
+    display: block;
+    margin-top: 0.5rem;
 }
 
-#qrCode {
-    margin-top: 10px;
+@media (max-width: 576px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    button {
+        font-size: 1rem;
+    }
 }

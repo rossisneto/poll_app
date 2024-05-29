@@ -1,39 +1,70 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Campanha</title>
+    <title>Campaign Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-    <h1>Gerenciamento de Campanha</h1>
-    <form id="campaignForm">
-        <label for="title">Titulo:</label>
-        <input type="text" id="title" name="title" required>
-        <br>
-        <label for="question">Pergunta:</label>
-        <input type="text" id="question" name="question" required>
-        <br>
-        <label for="option1">Opção 1:</label>
-        <input type="text" id="option1" name="option1" required>
-        <br>
-        <label for="option2">Opção 2:</label>
-        <input type="text" id="option2" name="option2" required>
-        <br>
-        <label for="option3">Opção 3:</label>
-        <input type="text" id="option3" name="option3" required>
-        <br>
-        <label for="option4">Opção 4:</label>
-        <input type="text" id="option4" name="option4" required>
-        <br>
-        <button type="submit">Criar Campanha</button>
-    </form>
-    <div id="successMessage" class="hidden">
-        <h2>Campanha criada!</h2>
-        <img id="qrCode" alt="QR Code">
-        <p>Escaneie o QRCode</p>
+    <div class="container">
+        <h1 class="my-4">Gerenciamento de Campanhas</h1>
+        <form id="campaignForm" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="title">Titulo:</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+                <div class="invalid-feedback">Please enter a campaign title.</div>
+            </div>
+            <div class="form-group">
+                <label for="question">Pergunta:</label>
+                <input type="text" id="question" name="question" class="form-control" required>
+                <div class="invalid-feedback">Please enter a question.</div>
+            </div>
+            <div class="form-group">
+                <label for="option1">Opção 1:</label>
+                <input type="text" id="option1" name="option1" class="form-control" required>
+                <div class="invalid-feedback">Please enter option 1.</div>
+            </div>
+            <div class="form-group">
+                <label for="option2">Opção 2:</label>
+                <input type="text" id="option2" name="option2" class="form-control" required>
+                <div class="invalid-feedback">Please enter option 2.</div>
+            </div>
+            <div class="form-group">
+                <label for="option3">Opção 3:</label>
+                <input type="text" id="option3" name="option3" class="form-control" required>
+                <div class="invalid-feedback">Please enter option 3.</div>
+            </div>
+            <div class="form-group">
+                <label for="option4">Opção 4:</label>
+                <input type="text" id="option4" name="option4" class="form-control" required>
+                <div class="invalid-feedback">Please enter option 4.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Criar Campanha</button>
+        </form>
     </div>
     <script src="../js/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Bootstrap validation example
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
 </body>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">Survey Results</h1>
+        <div class="form-group">
+            <label for="campaignSelect">Select Campaign:</label>
+            <select id="campaignSelect" class="form-control">
+                <option value="">Select a campaign</option>
+            </select>
+        </div>
+        <div class="chart-container mt-4" style="position: relative; height:40vh; width:80vw; margin: 0 auto;">
+            <canvas id="resultsChart"></canvas>
+        </div>
+    </div>
+    <script src="../js/results.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

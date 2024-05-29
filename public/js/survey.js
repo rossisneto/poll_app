@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (response.ok) {
             const campaign = await response.json();
             document.getElementById('question').textContent = campaign.question;
-            document.getElementById('option1').textContent = campaign.option1;
-            document.getElementById('option2').textContent = campaign.option2;
-            document.getElementById('option3').textContent = campaign.option3;
-            document.getElementById('option4').textContent = campaign.option4;
+            document.getElementById('option1Button').textContent = campaign.option1;
+            document.getElementById('option2Button').textContent = campaign.option2;
+            document.getElementById('option3Button').textContent = campaign.option3;
+            document.getElementById('option4Button').textContent = campaign.option4;
         } else {
             alert('Failed to load campaign');
         }
@@ -18,13 +18,27 @@ document.addEventListener('DOMContentLoaded', async function () {
         alert('Failed to load campaign');
     }
 
+    const optionButtons = document.querySelectorAll('.btn-option');
+    optionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            optionButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById('selectedOption').value = this.id.replace('Button', '');
+        });
+    });
+
     document.getElementById('surveyForm').addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        const selectedOption = document.querySelector('input[name="option"]:checked').value;
+        const selectedOption = document.getElementById('selectedOption').value;
+
+        if (!selectedOption) {
+            alert('Please select an option.');
+            return;
+        }
 
         try {
-            const response = await fetch(`/campaigns/${uniqueLink}/submit`, {
+            const response = await fetch(`/campaign/${uniqueLink}/submit`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -33,8 +47,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             });
 
             if (response.ok) {
-                alert('Survey submitted successfully!');
+                window.location.href = '/html/thankyou.html';  // Redireciona para a página de agradecimento
             } else {
+                const errorData = await response.json();
+                console.error('Error response data:', errorData);
                 alert('Failed to submit survey');
             }
         } catch (error) {
