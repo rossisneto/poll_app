@@ -4,6 +4,43 @@ const { nanoid } = require('nanoid');
 const QRCode = require('qrcode');
 const path = require('path');
 const generateLink = require('../utils/generateLink');  // Importe a função para gerar o link base
+//const ip2location = require('ip2location-nodejs');
+const {IP2Location, IP2LocationWebService, IPTools, Country, Region} = require("ip2location-nodejs");
+
+let ip2location = new IP2Location();
+
+ip2location.open("./IP2LOCATION-LITE-DB9.BIN");
+
+// Inicializar IP2Location
+//ip2location.IP2Location_init('IP2LOCATION-LITE-DB9.BIN');
+
+// Função para registrar a localização do cliente
+exports.registerResponseLocation = async (req, res) => {
+  try {
+    const ip = req.ip; // Capturar o endereço IP do cliente
+    console.log(ip);
+    const locationResult = ip2location.IP2Location_get_all(ip);
+    console.log(locationResult);
+
+    if (!locationResult) {
+      return res.status(400).json({ error: 'Unable to determine location' });
+    }
+
+    const location = `${locationResult.latitude}, ${locationResult.longitude}`;
+
+    const db = await initializeDatabase();
+    await db.run(
+      'INSERT INTO response_locations (ip, latitude, longitude) VALUES (?, ?, ?)',
+      [ip, locationResult.latitude, locationResult.longitude]
+    );
+
+    await db.close();
+    res.status(200).json({ message: 'Location registered successfully', location });
+  } catch (error) {
+    console.error('Error registering location:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 // Função para criar uma nova campanha
 exports.createCampaign = async (req, res) => {

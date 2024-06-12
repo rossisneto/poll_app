@@ -17,6 +17,8 @@ initializeDatabase().then(() => {
 
 const app = express();
 
+app.set('trust proxy', true);
+
 // Middleware para analisar o corpo das requisições JSON
 app.use(express.json());
 

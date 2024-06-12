@@ -15,6 +15,9 @@ router.get('/campaign/:unique_link', campaignController.getCampaignByUniqueLink)
 // Rota para submeter uma resposta
 router.post('/campaign/:unique_link/submit', campaignController.submitResponse);
 
+// Rota para registrar a localização do cliente
+router.post('/campaign/:unique_link/register-location', campaignController.registerResponseLocation);
+
 // Rota para recuperar os resultados das respostas
 router.get('/responses', ensureAuthenticated, campaignController.getResponses);
 

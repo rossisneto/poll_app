@@ -1,6 +1,5 @@
 document.getElementById('campaignForm').addEventListener('submit', async function (event) {
     event.preventDefault();
-
     const formData = {
         title: document.getElementById('title').value,
         question: document.getElementById('question').value,
@@ -11,7 +10,7 @@ document.getElementById('campaignForm').addEventListener('submit', async functio
     };
 
     console.log("Form Data:", formData); // Adicione este log para verificar os dados enviados
-
+    
     try {
         const response = await fetch('/campaigns', {
             method: 'POST',
