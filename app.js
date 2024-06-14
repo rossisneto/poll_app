@@ -7,6 +7,9 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const campaignRoutes = require('./routes/campaignRoutes');
 const initializeDatabase = require('./config/db');
+//var getIP = require('ipware')().get_ip;
+
+
 
 // Inicializa o banco de dados e cria as tabelas necessárias
 initializeDatabase().then(() => {

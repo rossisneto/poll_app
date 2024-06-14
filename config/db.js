@@ -1,10 +1,10 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
+const sqlite3 = require("sqlite3").verbose();
+const { open } = require("sqlite");
 
 async function initializeDatabase() {
   const db = await open({
-    filename: './database.sqlite',
-    driver: sqlite3.Database
+    filename: "./database.sqlite",
+    driver: sqlite3.Database,
   });
 
   await db.exec(`
@@ -18,6 +18,9 @@ async function initializeDatabase() {
       provider TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
+    
+
 
     CREATE TABLE IF NOT EXISTS campaigns (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,6 +42,7 @@ async function initializeDatabase() {
       campaign_id INTEGER NOT NULL,
       user_id INTEGER NOT NULL,
       selected_option TEXT NOT NULL,
+      location_data TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (campaign_id) REFERENCES campaigns(id),
       FOREIGN KEY (user_id) REFERENCES users(id)
@@ -47,8 +51,7 @@ async function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS response_locations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       ip TEXT NOT NULL,
-      latitude TEXT NOT NULL,
-      longitude TEXT NOT NULL,
+      location_data TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `);

@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thank You</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/styles.css">
-</head>
-<body>
-    <div class="container text-center my-5">
-        <h1>Obrigado!</h1>
-        <p>Sua resposta foi registrada. Agradecemos pela sua participação na pesquisa!</p>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="my-4 text-center">Obrigadopela sua participação!</h1>
+      <p>Sua resposta foi registrada com sucesso.</p>
+      <h3>Detalhes de GeoLocation:</h3>
+      <pre id="locationDetails"></pre>
     </div>
-</body>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const locationData = sessionStorage.getItem("locationData");
+        if (locationData) {
+          document.getElementById("locationDetails").textContent =
+            JSON.stringify(JSON.parse(locationData), null, 2);
+        }
+      });
+    </script>
+  </body>
 </html>

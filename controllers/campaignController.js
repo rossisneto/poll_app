@@ -3,41 +3,63 @@ const { createCampaign, findCampaignById } = require('../models/campaign');
 const { nanoid } = require('nanoid');
 const QRCode = require('qrcode');
 const path = require('path');
-const generateLink = require('../utils/generateLink');  // Importe a função para gerar o link base
-//const ip2location = require('ip2location-nodejs');
-const {IP2Location, IP2LocationWebService, IPTools, Country, Region} = require("ip2location-nodejs");
+const generateLink = require('../utils/generateLink');
+const axios = require('axios');
+const http = require('http');
 
-let ip2location = new IP2Location();
+const apiKey = 'at_XdIUHrJJRYBTsPRHuiR69VNKeW96b'; // Chave de API para geo.ipify.org
 
-ip2location.open("./IP2LOCATION-LITE-DB9.BIN");
-
-// Inicializar IP2Location
-//ip2location.IP2Location_init('IP2LOCATION-LITE-DB9.BIN');
-
-// Função para registrar a localização do cliente
-exports.registerResponseLocation = async (req, res) => {
+// Função para submeter uma resposta e registrar a localização
+exports.submitResponseAndLocation = async (req, res) => {
   try {
-    const ip = req.ip; // Capturar o endereço IP do cliente
-    console.log(ip);
-    const locationResult = ip2location.IP2Location_get_all(ip);
-    console.log(locationResult);
+    const { selectedOption } = req.body;
+    const unique_link = req.params.unique_link;
 
-    if (!locationResult) {
-      return res.status(400).json({ error: 'Unable to determine location' });
+    if (!selectedOption) {
+      return res.status(400).json({ error: 'No option selected' });
     }
 
-    const location = `${locationResult.latitude}, ${locationResult.longitude}`;
+    // Capturar o IP público do cliente usando api.ipify.org
+    http.get({ host: 'api.ipify.org', port: 80, path: '/' }, async (resp) => {
+      let ip = '';
+      resp.on('data', (chunk) => {
+        ip += chunk;
+      });
+      resp.on('end', async () => {
+        try {
+          const apiUrl = `https://geo.ipify.org/api/v1?apiKey=${apiKey}&ipAddress=${ip}`;
 
-    const db = await initializeDatabase();
-    await db.run(
-      'INSERT INTO response_locations (ip, latitude, longitude) VALUES (?, ?, ?)',
-      [ip, locationResult.latitude, locationResult.longitude]
-    );
+          const geoResponse = await axios.get(apiUrl);
+          const locationData = geoResponse.data;
 
-    await db.close();
-    res.status(200).json({ message: 'Location registered successfully', location });
+          const db = await initializeDatabase();
+          const campaign = await db.get('SELECT * FROM campaigns WHERE unique_link = ?', [unique_link]);
+
+          if (!campaign) {
+            await db.close();
+            return res.status(404).json({ error: 'Campaign not found' });
+          }
+
+          const user_id = req.user ? req.user.id : 1;  // Captura o ID do usuário logado, usando 1 para teste
+
+          await db.run(
+            'INSERT INTO responses (campaign_id, user_id, selected_option, location_data) VALUES (?, ?, ?, ?)',
+            [campaign.id, user_id, selectedOption, JSON.stringify(locationData)]
+          );
+
+          await db.close();
+          res.status(200).json({ message: 'Response submitted successfully', location: locationData });
+        } catch (error) {
+          console.error('Error registering location:', error);
+          res.status(500).json({ error: 'Internal server error' });
+        }
+      });
+    }).on('error', (err) => {
+      console.error('Error fetching IP:', err);
+      res.status(500).json({ error: 'Error fetching IP' });
+    });
   } catch (error) {
-    console.error('Error registering location:', error);
+    console.error('Error submitting response:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -46,7 +68,6 @@ exports.registerResponseLocation = async (req, res) => {
 exports.createCampaign = async (req, res) => {
   try {
     const { title, question, option1, option2, option3, option4 } = req.body;
-    console.log("Request Body:", req.body);  // Log dos dados recebidos
 
     if (!title || !question || !option1 || !option2 || !option3 || !option4) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -56,14 +77,12 @@ exports.createCampaign = async (req, res) => {
     const user_id = req.user ? req.user.id : 1;  // Captura o ID do usuário logado, usando 1 para teste
     const link = generateLink(unique_link);  // Gere o link base
 
-    console.log("Generating QR Code for link:", link);
-    // Gera o QR Code
     const qr_code = await QRCode.toDataURL(link);
 
     const db = await initializeDatabase();
     const campaign = await createCampaign(db, { title, question, option1, option2, option3, option4, unique_link, user_id, qr_code });
     await db.close();
-    console.log("Campaign created successfully:", campaign);
+
     res.status(201).json({ ...campaign, link });
   } catch (error) {
     console.error('Error creating campaign:', error);
@@ -99,46 +118,9 @@ exports.getCampaignByUniqueLink = async (req, res) => {
       return res.status(404).json({ error: 'Campaign not found' });
     }
     const surveyPath = path.join(__dirname, '..', 'public', 'html', 'survey.html');
-    console.log("Serving survey.html from:", surveyPath);
     res.sendFile(surveyPath);
   } catch (error) {
     console.error('Error getting campaign:', error);
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// Função para submeter uma resposta
-exports.submitResponse = async (req, res) => {
-  try {
-    const { selectedOption } = req.body;
-    const unique_link = req.params.unique_link;
-
-    if (!selectedOption) {
-      console.error('No option selected');
-      return res.status(400).json({ error: 'No option selected' });
-    }
-
-    const db = await initializeDatabase();
-    const campaign = await db.get('SELECT * FROM campaigns WHERE unique_link = ?', [unique_link]);
-
-    if (!campaign) {
-      await db.close();
-      console.error('Campaign not found');
-      return res.status(404).json({ error: 'Campaign not found' });
-    }
-
-    const user_id = req.user ? req.user.id : 1;  // Captura o ID do usuário logado, usando 1 para teste
-
-    await db.run(
-      'INSERT INTO responses (campaign_id, user_id, selected_option) VALUES (?, ?, ?)',
-      [campaign.id, user_id, selectedOption]
-    );
-
-    await db.close();
-    console.log('Response submitted successfully');
-    res.status(200).json({ message: 'Response submitted successfully' });
-  } catch (error) {
-    console.error('Error submitting response:', error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -152,6 +134,7 @@ exports.getResponses = async (req, res) => {
         responses.id, 
         responses.selected_option, 
         responses.created_at, 
+        responses.location_data, 
         campaigns.title AS campaign_title, 
         campaigns.question, 
         users.name AS user_name, 

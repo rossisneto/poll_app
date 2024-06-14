@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const uniqueLink = window.location.pathname.split('/').pop();
-    
 
     try {
-        
         const response = await fetch(`/api/campaign/${uniqueLink}`);
         if (response.ok) {
             const campaign = await response.json();
@@ -33,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         event.preventDefault();
 
         const selectedOption = document.getElementById('selectedOption').value;
-        alert(ip);
+
         if (!selectedOption) {
             alert('Please select an option.');
             return;
@@ -49,11 +47,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             });
 
             if (response.ok) {
-                // Registrar localização
-                await fetch(`/campaign/${uniqueLink}/register-location`, {
-                    method: 'POST'
-                });
-
+                const result = await response.json();
+                sessionStorage.setItem('locationData', JSON.stringify(result.location));
                 window.location.href = '/html/thankyou.html';  // Redireciona para a página de agradecimento
             } else {
                 const errorData = await response.json();
